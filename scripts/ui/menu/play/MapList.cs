@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -15,6 +16,15 @@ public partial class MapList : Panel, ISkinnable
         Alphabetical,
         Difficulty,
         Mappers
+    }
+
+    public enum FilterType
+    {
+        Easy,
+        Medium,
+        Hard,
+        Insane,
+        Illogical
     }
 
     [ExportGroup("Layout")]
@@ -67,6 +77,9 @@ public partial class MapList : Panel, ISkinnable
     public string AuthorQuery = "";
     public Bindable<bool> Ascending = new(true);
     public Bindable<SortType> Sorting = new(SortType.Alphabetical);
+    public ObservableCollection<FilterType> Filters = [];
+
+    public List<Map> cachedMaps = [];
 
     /// <summary>
     /// Queried and ordered maps to display in the list
@@ -119,6 +132,7 @@ public partial class MapList : Panel, ISkinnable
         scrollBarBackgroundBottom = scrollBarBackground.GetNode<TextureRect>("Bottom");
 
         Sorting.ValueChanged += (_, _) => Sort();
+        Filters.CollectionChanged += (_, _) => Filter();
         Ascending.ValueChanged += (_, _) => Sort();
 
         MouseExited += () => { toggleSelectionCursor(false); };
@@ -428,6 +442,36 @@ public partial class MapList : Panel, ISkinnable
         }
     }
 
+    public void Filter()
+    {
+        //tmp
+        if (cachedMaps.Count == 0)
+        {
+            cachedMaps = Maps;
+        }
+
+        if (Filters.Count == 0)
+        {
+            Maps = cachedMaps.Where(map => map.Favorite).ToList();
+            Maps.AddRange(cachedMaps.Where(map => !map.Favorite));
+            clear();
+            return;
+        }
+
+        List<Map> filteredMaps = [];
+
+        foreach (FilterType type in Filters)
+        {
+            string typeString = type.ToString();
+            List<Map> foundMaps = cachedMaps.FindAll(m => m.DifficultyName == typeString);
+            filteredMaps.AddRange(foundMaps);
+            Logger.Log($"Found {foundMaps.Count} {typeString}!");
+        }
+        Maps = filteredMaps.Where(map => map.Favorite).ToList();
+        Maps.AddRange(filteredMaps.Where(map => !map.Favorite));
+
+        clear();
+    }
     public void Sort()
     {
         List<Map> orderedMaps;
