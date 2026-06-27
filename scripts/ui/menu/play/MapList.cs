@@ -77,9 +77,15 @@ public partial class MapList : Panel, ISkinnable
     public string AuthorQuery = "";
     public Bindable<bool> Ascending = new(true);
     public Bindable<SortType> Sorting = new(SortType.Alphabetical);
-    public ObservableCollection<FilterType> Filters = [];
+    public ObservableCollection<FilterType> Filters = [
+        FilterType.Easy,
+        FilterType.Medium,
+        FilterType.Hard,
+        FilterType.Insane,
+        FilterType.Illogical
+    ];
 
-    public List<Map> cachedMaps = [];
+    private List<Map> cachedMaps = [];
 
     /// <summary>
     /// Queried and ordered maps to display in the list
@@ -174,6 +180,7 @@ public partial class MapList : Panel, ISkinnable
 
         UpdateLayout(Layout);
         UpdateSkin();
+        cachedMaps = Maps;
     }
 
     public override void _Process(double delta)
@@ -442,31 +449,19 @@ public partial class MapList : Panel, ISkinnable
         }
     }
 
+    // Right now the way I'm filtering maps is just in one query with enumerations, this is alright but can be better :D
+    // When a filter is being removed, the maps also get removed (due to the Maps property being changed), so I added a temporary 'cachedMaps' List as I'm not
+    // sure if this is the greatest way of doing it (adding another list etc etc), this makes the entire way of holding a map "list" more complex.
+    // Some currently found bugs:
+    // 1. adding a filter can behave weirdly after using the sorting feature
+
     public void Filter()
     {
-        //tmp
-        if (cachedMaps.Count == 0)
-        {
-            cachedMaps = Maps;
-        }
-
-        if (Filters.Count == 0)
-        {
-            Maps = cachedMaps.Where(map => map.Favorite).ToList();
-            Maps.AddRange(cachedMaps.Where(map => !map.Favorite));
-            clear();
-            return;
-        }
-
-        List<Map> filteredMaps = [];
-
-        foreach (FilterType type in Filters)
-        {
-            string typeString = type.ToString();
-            List<Map> foundMaps = cachedMaps.FindAll(m => m.DifficultyName == typeString);
-            filteredMaps.AddRange(foundMaps);
-            Logger.Log($"Found {foundMaps.Count} {typeString}!");
-        }
+        // Query all maps with the current active filters
+        List<Map> filteredMaps = cachedMaps
+            .Where(map => Filters.Contains(Enum.Parse<FilterType>(map.DifficultyName)))
+            .ToList();
+        Logger.Log($"Found {filteredMaps.Count} maps!");
         Maps = filteredMaps.Where(map => map.Favorite).ToList();
         Maps.AddRange(filteredMaps.Where(map => !map.Favorite));
 

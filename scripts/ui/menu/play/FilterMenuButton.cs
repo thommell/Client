@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Godot;
 
 
-public partial class FilterButton : Button, ISkinnable
+// This class is right now responsible to changing UI state and changing the current filter state for the maplist.
+// I have not fully removed everything (as this was just a simple ctrlc+ctrlv from SortMenuButton, some stuff is still incorrect.
+public partial class FilterMenuButton : Button, ISkinnable
 {
     [Export]
     private Control panel;
@@ -18,7 +20,6 @@ public partial class FilterButton : Button, ISkinnable
     private VBoxContainer buttonHolder;
     private Dictionary<Button, bool> buttonsInformation = [];
 
-    private Button previousButton;
 
     public override void _Ready()
     {
@@ -26,21 +27,33 @@ public partial class FilterButton : Button, ISkinnable
         order.Pressed += toggleOrder;
         SkinManager.Instance.Loaded += UpdateSkin;
 
-        previousButton = buttonHolder.GetNode<Button>("Alphabetical");
-
         foreach (var node in buttonHolder.GetChildren())
         {
             var button = (Button)node;
-            if (!buttonsInformation.TryAdd(button, false))
+            if (!buttonsInformation.TryAdd(button, true))
             {
                 Logger.Error("Tried adding the same reference of button twice!");
             }
+            checkButtonStateColor(button);
             button.Pressed += () => selectFilter(button);
+            button.Pressed += () => checkButtonStateColor(button);
         }
 
         UpdateSkin(SkinManager.Instance.Skin);
     }
 
+    private void checkButtonStateColor(Button button)
+    {
+        buttonsInformation.TryGetValue(button, out bool state);
+        if (state)
+        {
+            button.Modulate = new Color(1f, 1f, 1f);
+        }
+        else
+        {
+            button.Modulate = new Color(1f, 1f, 1f, 0.3f);
+        }
+    }
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventMouseButton mouseButton && mouseButton.Pressed)
@@ -57,7 +70,6 @@ public partial class FilterButton : Button, ISkinnable
 
     public void UpdateSkin(SkinProfile skin)
     {
-        order.Icon = MapList.Instance.Ascending.Value ? skin.SortAscendButtonImage : skin.SortButtonImage;
         Icon = order.Icon;
     }
 
@@ -73,21 +85,15 @@ public partial class FilterButton : Button, ISkinnable
         if (!isActiveState)
         {
             addFilterItem(result);
+            button.TextureFilter = TextureFilterEnum.Max;
         }
         else
         {
             removeFilteritem(result);
+            button.TextureFilter = TextureFilterEnum.Linear;
         }
 
         buttonsInformation[button] = !isActiveState;
-
-        return;
-        if (MapList.Instance.Filters.Count != 0)
-        {
-            MapList.Instance.Filters.Clear();
-            Logger.Log("Resetting filters.");
-            return;
-        }
     }
 
     private void addFilterItem(MapList.FilterType filter)
