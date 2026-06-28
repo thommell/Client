@@ -38,8 +38,9 @@
 [ext_resource type="Script" uid="uid://d36x1ln46itd1" path="res://scripts/ui/menu/play/RandomPickButton.cs" id="27_u43bj"]
 [ext_resource type="Script" uid="uid://nob6vs2h1mwj" path="res://scripts/ui/menu/ImportButton.cs" id="28_eku7s"]
 [ext_resource type="Shader" uid="uid://rngh60dyh10b" path="res://scripts/shaders/outline.gdshader" id="30_q13xq"]
-[ext_resource type="Texture2D" uid="uid://bfy3x7rqnts4i" path="res://user/skins/default/ui/buttons/filter.png" id="31_5053t"]
+[ext_resource type="Texture2D" uid="uid://bfy3x7rqnts4i" path="res://user/skins/default/ui/buttons/filter.png" id="31_akqfu"]
 [ext_resource type="Texture2D" uid="uid://bl6ten82nkjmd" path="res://user/skins/default/ui/buttons/sort.png" id="32_2wgix"]
+[ext_resource type="Script" path="res://FilterButton.cs" id="32_akqfu"]
 [ext_resource type="Script" uid="uid://b6mbjcjxklb81" path="res://scripts/ui/menu/play/SortMenuButton.cs" id="33_71lbq"]
 [ext_resource type="Texture2D" uid="uid://c6k1k4817che2" path="res://user/skins/default/ui/buttons/author.png" id="33_b56yx"]
 [ext_resource type="Script" uid="uid://b47jydbbjdh3i" path="res://scripts/ui/menu/SoundSpaceButton.cs" id="33_yxnar"]
@@ -808,15 +809,131 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 icon = ExtResource("16_6h3lr")
 script = ExtResource("17_dj67d")
 
-[node name="Filters" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer" unique_id=834884660]
+[node name="Filter" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer" unique_id=1824061414]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 focus_mode = 0
 mouse_default_cursor_shape = 2
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-disabled = true
-icon = ExtResource("31_5053t")
+toggle_mode = true
+icon = ExtResource("31_akqfu")
+script = ExtResource("32_akqfu")
+
+[node name="Panel" type="PanelContainer" parent="Menus/Play/SubTopBar/HBoxContainer/Filter" unique_id=1697906287]
+visible = false
+z_index = 1
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = 4.0
+grow_horizontal = 2
+theme = ExtResource("6_engjn")
+
+[node name="Background" type="Panel" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel" unique_id=2002658841]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hjv1c")
+
+[node name="MarginContainer" type="MarginContainer" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel" unique_id=205602010]
+layout_mode = 2
+theme = ExtResource("6_engjn")
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer" unique_id=1128987281]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer" unique_id=1481521237]
+layout_mode = 2
+
+[node name="Sort" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=556746297]
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/icon_max_width = 24
+icon = ExtResource("31_akqfu")
+icon_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1349218914]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme = ExtResource("6_engjn")
+theme_override_constants/separation = 2
+
+[node name="SortOrder" type="Label" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1340263427]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Ascending"
+
+[node name="FilterButtonHolder" type="VBoxContainer" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer" unique_id=161045747]
+layout_mode = 2
+theme = SubResource("Theme_akqfu")
+theme_override_constants/separation = 4
+
+[node name="Easy" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/FilterButtonHolder" unique_id=2041065357]
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/icon_max_width = 24
+text = "Easy"
+icon_alignment = 1
+
+[node name="Hard" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/FilterButtonHolder" unique_id=1610913410]
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/icon_max_width = 24
+text = "Hard"
+icon_alignment = 1
+
+[node name="Insane" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/FilterButtonHolder" unique_id=783887242]
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/icon_max_width = 24
+text = "Insane
+"
+icon_alignment = 1
+
+[node name="Medium" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/FilterButtonHolder" unique_id=1788918788]
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/icon_max_width = 24
+text = "Medium
+"
+icon_alignment = 1
+
+[node name="Illogical" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer/Filter/Panel/MarginContainer/VBoxContainer/FilterButtonHolder" unique_id=1016588555]
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/icon_max_width = 24
+text = "Illogical
+
+"
+icon_alignment = 1
 
 [node name="Sort" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer" unique_id=1032136468 node_paths=PackedStringArray("panel", "order", "orderLabel", "buttons")]
 custom_minimum_size = Vector2(0, 36)
@@ -1742,7 +1859,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_eku7s")
 
 [node name="TopBar" type="Panel" parent="." unique_id=560351556]
-anchors_preset = -1
+anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 72.0
 mouse_filter = 2
@@ -1878,7 +1995,7 @@ Link = "https://discord.gg/kaFPWkfZeS"
 
 [node name="JukeboxPanel" type="Panel" parent="." unique_id=1253575]
 clip_contents = true
-anchors_preset = -1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
